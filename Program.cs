@@ -1,10 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var folderPath = builder.Configuration.GetSection("AppSettings").GetValue<string>("FolderPath")
