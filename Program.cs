@@ -5,9 +5,15 @@ var folderPath = builder.Configuration.GetSection("AppSettings").GetValue<string
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello Fympix!");
+app.MapGet("/", () =>
+{
+    var images = Directory
+        .GetFiles(folderPath)
+        .Select(file => Path.GetFileName(file));
+    return Results.Ok(images);
+});
 
-app.MapPost("/images", async (IFormFile image) =>
+app.MapPost("/", async (IFormFile image) =>
 {
     const long maxFileSize = 5 * 1024 * 1024; // 5MB
     if (image.Length > maxFileSize)
@@ -29,15 +35,7 @@ app.MapPost("/images", async (IFormFile image) =>
     return Results.Ok();
 }).DisableAntiforgery();
 
-app.MapGet("/images", () =>
-{
-    var images = Directory
-        .GetFiles(folderPath)
-        .Select(file => Path.GetFileName(file));
-    return Results.Ok(images);
-});
-
-app.MapGet("/images/{filename}", (string filename) =>
+app.MapGet("/{filename}", (string filename) =>
 {
     var filePath = Path.Combine(folderPath, filename);
     if (!File.Exists(filePath))
@@ -55,4 +53,5 @@ app.MapGet("/images/{filename}", (string filename) =>
     };
     return Results.File(Path.GetFullPath(filePath), contentType);
 });
+
 app.Run();
