@@ -1,7 +1,17 @@
+using System;
+using System.IO;
+using System.Linq;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var folderPath = builder.Configuration.GetSection("AppSettings").GetValue<string>("FolderPath")
     ?? throw new NullReferenceException("FolderPath not found");
+
+var baseUrl = builder.Configuration.GetSection("AppSettings").GetValue<string>("BaseUrl")
+    ?? throw new NullReferenceException("BaseUrl not found");
 
 var app = builder.Build();
 
@@ -32,7 +42,7 @@ app.MapPost("/", async (IFormFile image) =>
     using var stream = new FileStream(filePath, FileMode.Create);
     await image.CopyToAsync(stream);
 
-    return Results.Ok();
+    return Results.Json(new { Url = $"{baseUrl}/{fileName}" });
 }).DisableAntiforgery();
 
 app.MapGet("/{filename}", (string filename) =>
