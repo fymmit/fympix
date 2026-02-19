@@ -1,0 +1,6 @@
+@fympix_api_HostAddress = http://localhost:5159
+
+GET {{fympix_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
