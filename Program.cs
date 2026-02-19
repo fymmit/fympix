@@ -1,5 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
 
+var folderPath = builder.Configuration.GetSection("AppSettings").GetValue<string>("FolderPath")
+    ?? throw new NullReferenceException("FolderPath not found");
+
 var app = builder.Build();
 
 app.MapGet("/", () => "Hello Fympix!");
@@ -19,7 +22,7 @@ app.MapPost("/images", async (IFormFile image) =>
     var ext = Path.GetExtension(image.FileName);
     var fileName = randomName + ext;
 
-    var filePath = Path.Combine("uploads", fileName);
+    var filePath = Path.Combine(folderPath, fileName);
     using var stream = new FileStream(filePath, FileMode.Create);
     await image.CopyToAsync(stream);
 
@@ -29,14 +32,14 @@ app.MapPost("/images", async (IFormFile image) =>
 app.MapGet("/images", () =>
 {
     var images = Directory
-        .GetFiles("uploads")
+        .GetFiles(folderPath)
         .Select(file => Path.GetFileName(file));
     return Results.Ok(images);
 });
 
 app.MapGet("/images/{filename}", (string filename) =>
 {
-    var filePath = Path.Combine("uploads", filename);
+    var filePath = Path.Combine(folderPath, filename);
     if (!File.Exists(filePath))
         return Results.NotFound();
 
