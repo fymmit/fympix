@@ -76,7 +76,7 @@ app.MapPost("/", async (IFormFile file, [FromForm] string tags) =>
         Value = t
     }).ToList());
 
-    return Results.Json(new { Url = $"{baseUrl}/{fileName}" });
+    return Results.Ok($"{baseUrl}/{fileName}");
 }).DisableAntiforgery();
 
 app.MapGet("/{filename}", (string filename) =>
