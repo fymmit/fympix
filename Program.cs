@@ -12,7 +12,7 @@ app.MapGet("/", () =>
 {
     var images = Directory
         .GetFiles(folderPath)
-        .Select(file => Path.GetFileName(file));
+        .Select(file => $"{baseUrl}/{Path.GetFileName(file)}");
     return Results.Ok(images);
 });
 
