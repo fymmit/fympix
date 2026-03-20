@@ -16,7 +16,19 @@ var db = new SQLiteConnection(new SQLiteConnectionString(dbConnectionString, tru
 db.CreateTable<Entities.Image>();
 db.CreateTable<Entities.Tag>();
 
+builder.Services.AddCors(o =>
+{
+    o.AddDefaultPolicy(p =>
+    {
+        p.AllowAnyOrigin();
+        p.AllowAnyHeader();
+        p.AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors();
 
 app.MapGet("/", ([FromQuery] string? search) =>
 {
